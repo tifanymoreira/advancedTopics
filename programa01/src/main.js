@@ -1,6 +1,6 @@
 // import Jogador from './jogador.js'
 // import Cangaceiro from './cangaceiro.js'
-import Phaser from 'phaser'
+import Phaser from 'Phaser'
 
 const config = {
     type: Phaser.AUTO,
