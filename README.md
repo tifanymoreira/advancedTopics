@@ -1,1 +1,1 @@
-# advancedTopics
+# Collection of projects and game examples demonstrating advanced development topics, primarily built with JavaScript and related web technologies.
