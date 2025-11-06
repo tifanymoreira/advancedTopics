@@ -1,0 +1,30 @@
+/* Ajuste conforme o tamanho do jogo */
+:root {
+  --width: 1000px;
+  --height: 700px;
+}
+
+body {
+  margin: auto;
+  padding: auto;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #141414;
+  height: 100vh;
+}
+
+#app {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#game-container {
+  width: 100%;
+  height: 90%;
+  max-width: var(--width);
+  max-height: var(--height);
+  position: relative;
+  border: 0px solid red;
+}
