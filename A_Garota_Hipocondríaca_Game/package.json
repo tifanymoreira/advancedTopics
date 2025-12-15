@@ -1,5 +1,5 @@
 {
-  "name": "garota",
+  "name": "phaser-template",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -9,10 +9,9 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "vite": "^7.1.7"
+    "vite": "^7.1.6"
   },
   "dependencies": {
     "phaser": "^3.90.0"
   }
 }
-

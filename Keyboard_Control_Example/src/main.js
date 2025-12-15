@@ -1,64 +1,53 @@
-//------------------------------------------------------------------------
-// Main.js : Arquivo principal do Jogo
+/**
+ * Main.js
+ * Arquivo principal de configuração e inicialização do jogo Phaser.
+ */
 
 import Phaser from 'phaser';
-
-//importa as cenas
-
 import PreLoadScene from './scenes/PreLoadScene.js';
 import GameScene from './scenes/GameScene.js';
 
-//Configurações Globais
-
-//Dimensões da Tela do jogo
-const WIDTH  = 1000; //em px
+// Dimensões constantes do jogo
+const WIDTH  = 1000;
 const HEIGHT = 700;
 
-//Configurações compartilhadas entre as cenas
+// Configurações compartilhadas (injetadas em todas as cenas)
 const SHARED_CONFIG = {
   width: WIDTH,
   height: HEIGHT,
-  debug: false
+  debug: false // Altere para true para ver as caixas de colisão (hitboxes)
 };
 
-//Lista das cenas que compõem o jogo
+// Lista ordenada de cenas
 const SCENES = [
   PreLoadScene,
   GameScene
-]
+];
 
-//cria uma instância de cena com a configuração compartilhada
+// Função factory para inicializar cenas com a configuração compartilhada
 const createScene = Scene => new Scene(SHARED_CONFIG);
-
-//Inicializa todas as cenas do jogo
 const initScenes = () => SCENES.map(createScene);
 
-/*ele cria um mapeamento e atinge todas as páginas*/
-
-//------------------------------------------------------------------------
-//Configuração geral do Phaser.Game
-
+// Objeto de configuração principal do Phaser
 const config = {
-  type: Phaser.AUTO,
+  type: Phaser.AUTO, // Escolhe WebGL ou Canvas automaticamente
   ...SHARED_CONFIG,
-  backgroundColor: '#0080FF',
-  parent: 'game-container',
-  pixelArt: false,
+  backgroundColor: '#87CEEB', // Cor do céu (fallback se a imagem falhar)
+  parent: 'game-container',   // ID da DIV no HTML
+  pixelArt: false,            // False para gráficos suaves, True para estilo 8-bit
   physics: {
     default: 'arcade',
     arcade: {
-      gravity: {y:300},
-      debug: SHARED_CONFIG['debug'],
+      gravity: { y: 0 },      // Gravidade zero para estilo top-down/avião
+      debug: SHARED_CONFIG.debug,
     }
   },
-  scale:{
-    mode:Phaser.Scale.FIT,
-    autoCenter:Phaser.Scale.Center_Both
+  scale: {
+    mode: Phaser.Scale.FIT,   // Ajusta o jogo para caber na tela mantendo proporção
+    autoCenter: Phaser.Scale.CENTER_BOTH // Centraliza horizontal e verticalmente
   },
   scene: initScenes()
 };
 
-
-//------------------------------------------------------------------------
-//Inicializa a instância principal do jogo com a configuração definida
-new Phaser.Game(config)
+// Inicialização da instância do jogo
+new Phaser.Game(config);

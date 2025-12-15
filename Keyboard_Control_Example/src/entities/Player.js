@@ -1,47 +1,95 @@
-//Player.js: define a 
 import Phaser from "phaser";
 
-export default class Player extends Phaser.Physics.Arcade.Sprite{
-    //construtor
-    constructor(scene,x,y){
-        //incializa o sprite com a textura "Player"
+/**
+ * Player
+ * Classe que representa o jogador (avião/personagem).
+ * Herda de Arcade.Sprite para ter propriedades físicas e visuais.
+ */
+export default class Player extends Phaser.Physics.Arcade.Sprite {
+    /**
+     * @param {Phaser.Scene} scene - A cena onde o player existe.
+     * @param {number} x - Posição X inicial.
+     * @param {number} y - Posição Y inicial.
+     */
+    constructor(scene, x, y) {
         super(scene, x, y, 'player');
 
-        //Define a cena onde o player será adicionado
         this.scene = scene;
+        this.speed = 350; // Velocidade de movimento (pixels/segundo)
 
-        //Configura física, entrada e propriedades iniciais
+        // Inicializa física e inputs
         this.init();
+        this.initInput();
     }
 
-    /*----------------------------------------------------------------*/
-    //configura o sprite do jofador e suas propriedades físicas
-
-    init(){
-        //adiciona o sprite do player à cena para que seja renderizado
+    init() {
+        // Adiciona o sprite à cena e ao sistema de física
         this.scene.add.existing(this);
-
-        //adiciona o sprite ao sistema de física para que tenha corpo físico
         this.scene.physics.add.existing(this);
 
-        //impede que o player seja empurrado por outros objetos
-        this.setImmovable(true);
-
-        //Permite que o player colida com os limites da cena (parede da tela)
-        this.setCollideWorldBounds(true);
-
-        //Desativa a gravidade para o player (movimento apenas horizontal)
-        this.body.allowGravity = false;
+        // Configurações de colisão
+        this.setCollideWorldBounds(true); // Impede que saia da tela
+        this.body.setImmovable(true);     // Não é empurrado por colisões
+        this.body.allowGravity = false;   // Voo livre (sem gravidade puxando para baixo)
+        
+        // Ajuste opcional da caixa de colisão (hitbox) para ficar mais justo ao sprite
+        // this.body.setSize(this.width * 0.8, this.height * 0.8);
     }
 
-    //Atualiza o comportamento do jogador a cada frame
-    update(){
-        //to do...
+    initInput() {
+        // Cria o objeto de escuta das setas do teclado
+        this.cursors = this.scene.input.keyboard.createCursorKeys();
     }
 
-    //Funções auxiliares
+    /**
+     * Atualiza a lógica do jogador a cada frame.
+     */
+    update() {
+        // Zera a velocidade a cada frame para evitar inércia indesejada
+        this.body.setVelocity(0);
 
-    //to do...
+        // Variáveis para calcular a direção do movimento
+        let velocityX = 0;
+        let velocityY = 0;
+
+        // --- Verificação Horizontal ---
+        if (this.cursors.left.isDown) {
+            velocityX = -1;
+        } else if (this.cursors.right.isDown) {
+            velocityX = 1;
+        }
+
+        // --- Verificação Vertical ---
+        if (this.cursors.up.isDown) {
+            velocityY = -1;
+        } else if (this.cursors.down.isDown) {
+            velocityY = 1;
+        }
+
+        // --- Normalização do Vetor de Movimento ---
+        // Se houver movimento em qualquer eixo
+        if (velocityX !== 0 || velocityY !== 0) {
+            
+            // Calcula o comprimento do vetor (Teorema de Pitágoras)
+            // Se mover na diagonal (1, 1), o comprimento seria ~1.41
+            const length = Math.sqrt(velocityX * velocityX + velocityY * velocityY);
+            
+            // Normaliza (divide pelo comprimento) e multiplica pela velocidade desejada.
+            // Isso garante que a velocidade na diagonal seja igual à velocidade em linha reta (350).
+            velocityX = (velocityX / length) * this.speed;
+            velocityY = (velocityY / length) * this.speed;
+
+            this.body.setVelocity(velocityX, velocityY);
+        }
+
+        // --- Efeitos Visuais (Game Feel) ---
+        // Inclina levemente o avião ao subir ou descer para dar sensação de voo
+        if (velocityY < 0) {
+            this.setAngle(-5); // Inclina para cima
+        } else if (velocityY > 0) {
+            this.setAngle(5);  // Inclina para baixo
+        } else {
+            this.setAngle(0);  // Retorna à posição original
+        }
+    }
 }
-
-

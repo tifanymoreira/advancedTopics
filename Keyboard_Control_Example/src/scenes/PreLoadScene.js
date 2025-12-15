@@ -1,70 +1,67 @@
 import Phaser from "phaser";
 
-//Classe que define a cena de carregamento
-export default class PreLoadScene extends Phaser.Scene{
-    //construtor
-    constructor(){
-        super({key:'PreLoadScene'});
+/**
+ * PreLoadScene
+ * Responsável por carregar todos os assets (imagens, sons) antes do jogo iniciar.
+ */
+export default class PreLoadScene extends Phaser.Scene {
+    constructor() {
+        super({ key: 'PreLoadScene' });
     }
     
-    //carrega os assets utilizados pelo jogo
-    preload(){
-        //Exibe a barra de progresso
+    preload() {
+        // Exibe a barra de progresso visualmente
         this.displayProgressBar();
 
-        //carrega as imagens
-        this.load.image('cenario', '/assets/images/background.png')
+        // Carregamento dos Assets
+        // 'cenario' -> Imagem de fundo
+        this.load.image('cenario', '/assets/images/background.png');
+        // 'player'  -> Sprite do personagem/avião
         this.load.image('player', '/assets/images/avelino.png');
     }
 
-    //------------------------------------------------------------------------
-    //Inicializa os elementos da cena
-    create(){
-        //muda para a cena do jogo
+    create() {
+        // Após o carregamento completo, inicia a cena do jogo
         this.scene.start('GameScene');
     }
 
-    
-    //------------------------------------------------------------------------
-    //Funções auxiliares
+    /**
+     * Cria e gerencia a lógica da barra de progresso de carregamento.
+     */
+    displayProgressBar() {
+        const { width, height } = this.cameras.main;
 
-    //Cria e exibe uma barra de progresso
-    displayProgressBar(){
-        //dimensões da barra
-        const {width, height} = this.cameras.main;
-
-        //fundo da barra
+        // Desenha o fundo da barra (cinza escuro)
         const progressBarBg = this.add.graphics();
-        progressBarBg.fillStyle(0x222222,0.8);
-        progressBarBg.fillRect(width / 4 - 2, height / 2 - 12, width / 2 + 4 , 24);
+        progressBarBg.fillStyle(0x222222, 0.8);
+        progressBarBg.fillRect(width / 4 - 2, height / 2 - 12, width / 2 + 4, 24);
     
-        //barra principal
-    const progressBar = this.add.graphics();
+        // Prepara o gráfico da barra de preenchimento (branco)
+        const progressBar = this.add.graphics();
 
-    //texto "loading"
-    const loadingText = this.add.text(
-        width / 2, 
-        height / 2 - 30,
-        'Loading...',
-        {
-            fontSize: '20px',
-            fill: "#ffffff"
-        }
-    ).setOrigin(0.5);
+        // Adiciona texto informativo
+        const loadingText = this.add.text(
+            width / 2, 
+            height / 2 - 30,
+            'Carregando Assets...',
+            {
+                font: '20px Arial',
+                fill: "#ffffff"
+            }
+        ).setOrigin(0.5);
 
-    //Atualiza a barra conforme o progresso do carregamento
-    this.load.on('progress', (value) => {
-        progressBar.clear();
-        progressBar.fillStyle(0xffffff, 1);
-        progressBar.fillRect(width / 4, height / 2 - 10, (width/2) * value, 20);
-    });
+        // Evento: Atualiza a barra conforme os arquivos são carregados
+        this.load.on('progress', (value) => {
+            progressBar.clear();
+            progressBar.fillStyle(0xffffff, 1);
+            progressBar.fillRect(width / 4, height / 2 - 10, (width / 2) * value, 20);
+        });
 
-    //Remove os elementos da barra ao fim do carregamento
-    this.load.on('complete', () =>{
-        progressBar.destroy();
-        progressBarBg.destroy();
-        loadingText.destroy();
-    });
+        // Evento: Limpa os elementos visuais quando o carregamento termina
+        this.load.on('complete', () => {
+            progressBar.destroy();
+            progressBarBg.destroy();
+            loadingText.destroy();
+        });
     }
-    
 }
